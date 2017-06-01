@@ -1,9 +1,15 @@
 from django.db import models
-from users.models import User
 
 
 class Message(models.Model):
     created = models.DateTimeField(null=False, auto_now_add=True)
-    content = models.CharField(null=False, max_length=255)
-    sender = models.ForeignKey('User', null=False, related_name='messages')
-    state = models.CharField(null=False, default='sent', max_length=255)  # sent, delivered, viewed
+    owner = models.ForeignKey('auth.User', related_name='messages', on_delete=models.CASCADE)
+    room = models.ForeignKey('Room', related_name='messages', on_delete=models.CASCADE)
+    content = models.CharField(max_length=255, null=False)
+
+
+class Room(models.Model):
+    created = models.DateTimeField(null=False, auto_now_add=True)
+    owner = models.ForeignKey('auth.User', related_name='created_rooms', on_delete=models.CASCADE)
+    members = models.ManyToManyField('auth.User', related_name='rooms')
+    title = models.CharField(max_length=255, null=False)
