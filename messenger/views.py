@@ -19,9 +19,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.UserSerializer
 
 
-
 class MessageList(APIView):
-    renderer_classes = [BrowsableAPIRenderer]
+
     def get(self, request, format=None):
         messages = models.Message.objects.filter(room__in=request.user.rooms.all())
         serializer = serializers.MessageSerializer(messages, many=True)
@@ -46,14 +45,31 @@ class MessageDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.MessageSerializer
     permission_classes = [MessagePermissions]
 
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == 'PUT':
+            serializer_class = serializers.MessageSerializerReadOnlyRoom
+        return serializer_class
 
-class RoomViewSet(viewsets.ModelViewSet):
-    # if owner -> RUD IsOwner
-    # if room member -> R IsRoomMember
-    # if other -> C IsAuthenticated
+
+class RoomList(APIView):
+
+    def get(self, request, format=None):
+        rooms = request.user.rooms.all()
+        serializer = serializers.RoomSerializer(rooms, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    def post(self, request, format=None):
+        data = JSONParser().parse(request)
+        serializer = serializers.RoomSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user)
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RoomDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Room.objects.all()
     serializer_class = serializers.RoomSerializer
-    permission_classes = (RoomPermissions,)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    permission_classes = [RoomPermissions]

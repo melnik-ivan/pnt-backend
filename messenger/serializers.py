@@ -5,13 +5,16 @@ from django.contrib.auth.models import User
 
 class MessageSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
-    room = serializers.ReadOnlyField(source='room.title')
 
     class Meta:
         model = models.Message
         fields = (
             'id', 'content', 'owner', 'room',
         )
+
+
+class MessageSerializerReadOnlyRoom(MessageSerializer):
+    room = serializers.ReadOnlyField(source='room.title')
 
 
 class RoomSerializer(serializers.ModelSerializer):
