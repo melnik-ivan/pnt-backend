@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 
+from rest_framework.filters import SearchFilter
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework import viewsets, generics, status
@@ -16,6 +17,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
+    filter_backends = (SearchFilter,)
+    search_fields = ('username',)
 
 
 class MessageList(APIView):
@@ -72,6 +75,7 @@ class RoomDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Room.objects.all()
     serializer_class = serializers.RoomSerializer
     permission_classes = [RoomPermissions]
+
 
 class CurrentUser(APIView):
 
