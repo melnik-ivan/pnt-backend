@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'messages/(?P<pk>[0-9]+)/$', views.MessageDetailViewSet.as_view(), name='messages-detail'),
     url(r'rooms/$', views.RoomList.as_view(), name='rooms-list'),
     url(r'rooms/(?P<pk>[0-9]+)/$', views.RoomDetailViewSet.as_view(), name='rooms-detail'),
+    url(r'current_user/$', views.CurrentUser.as_view(), name='current-user'),
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

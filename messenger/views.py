@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework import viewsets, generics, status
 
 from messenger import serializers
@@ -73,3 +72,10 @@ class RoomDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Room.objects.all()
     serializer_class = serializers.RoomSerializer
     permission_classes = [RoomPermissions]
+
+class CurrentUser(APIView):
+
+    def get(self, request, format=None):
+        user = User.objects.get(id=request.user.id)
+        serializer = serializers.UserSerializer(user)
+        return JsonResponse(serializer.data)
