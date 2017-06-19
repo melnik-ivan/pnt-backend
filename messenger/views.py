@@ -22,6 +22,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class MessageList(APIView):
+    filter_backends = (SearchFilter,)
+    search_fields = ('room',)
 
     def get(self, request, format=None):
         messages = models.Message.objects.filter(room__in=request.user.rooms.all())
