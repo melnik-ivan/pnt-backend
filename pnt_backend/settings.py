@@ -126,6 +126,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    "/home/ivan/develop/tutorials/angular_django/pyngtalk/pnt_backend/front/dist",
+]
+
+STATIC_ROOT = "/home/ivan/develop/tutorials/angular_django/pyngtalk/pnt_backend/front/compile"
+
 REST_FRAMEWORK = {
     # 'DEFAULT_RENDERER_CLASSES': (
     #     'rest_framework.renderers.JSONRenderer',
